@@ -75,8 +75,8 @@ jobs:
           done < file3.txt
 
           tf_config="{\"include\":[$tf_config]}"
-          # echo "::set-output name=matrix::$tf_config"
-          echo "matrix=$tf_config" >> $GITHUB_ENV
+          echo "::set-output name=matrix::$tf_config"
+          # echo "matrix=$tf_config" >> $GITHUB_ENV
 
   terraform:
     name: "Terraform"
