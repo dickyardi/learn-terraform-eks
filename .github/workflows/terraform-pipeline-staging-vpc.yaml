@@ -9,14 +9,14 @@ on:
     # only run when files in this path changes
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#example-using-positive-and-negative-patterns-1
     paths:
-    - 'terraform-environments/aws/staging/10-vpc'
+    - 'terraform-environments/aws/staging/10-vpc/**'
     branches:
       - main
   pull_request:
     # only run when files in this path changes
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#example-using-positive-and-negative-patterns-1
     paths:
-    - 'terraform-environments/aws/staging/10-vpc'
+    - 'terraform-environments/aws/staging/10-vpc/**'
 
 jobs:
   terraform:
