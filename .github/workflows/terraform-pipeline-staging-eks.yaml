@@ -6,15 +6,13 @@ env:
 
 on:
   push:
-    # paths:
-    # - 'terraform-environments/aws/staging/20-eks'
+    paths:
+    - 'terraform-environments/aws/staging/20-eks/**'
     branches:
       - main
   pull_request:
-    branches:
-      - '**'
-    # paths:
-    # - 'terraform-environments/aws/staging/20-eks'
+    paths:
+    - 'terraform-environments/aws/staging/20-eks/**'
 
 jobs:
   terraform:
@@ -32,19 +30,19 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        # working-directory: $WORKDIR
-        run: terraform -chdir=$WORKDIR fmt
+        working-directory: $WORKDIR
+        run: terraform fmt
 
       - name: Terraform Init
         id: init
-        # working-directory: $WORKDIR
-        run: terraform -chdir=$WORKDIR init
+        working-directory: $WORKDIR
+        run: terraform init
 
       - name: Terraform Plan
         id: plan
-        # working-directory: $WORKDIR
+        working-directory: $WORKDIR
         if: github.event_name == 'pull_request'
-        run: terraform -chdir=$WORKDIR plan -no-color
+        run: terraform plan -no-color
         continue-on-error: true
 
       - name: Terraform Plan Status
@@ -52,6 +50,6 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        # working-directory: $WORKDIR
+        working-directory: $WORKDIR
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform -chdir=$WORKDIR apply -auto-approve
+        run: terraform apply -auto-approve
