@@ -5,10 +5,6 @@ env:
   WORKDIR: terraform-environments/aws/staging/20-eks
 
 on:
-  workflow_run:
-    workflows: ["Terraform - AWS VPC"]
-    types:
-      - completed
   push:
     paths:
     - 'terraform-environments/aws/staging/20-eks'
