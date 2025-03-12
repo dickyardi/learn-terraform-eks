@@ -81,7 +81,6 @@ module "eks" {
   eks_managed_node_groups  = {
     ng1 = {
       version          = "1.31"
-      ami_type         = "AL2023_x86_64_STANDARD"
       instance_types   = ["t3.small"]
       disk_size        = 20
       desired_size     = 2
