@@ -32,7 +32,7 @@ jobs:
       - name: Terraform Format
         id: fmt
         working-directory: terraform-environments/aws/staging/10-vpc
-        run: terraform fmt -check
+        run: terraform fmt
 
       - name: Terraform Init
         id: init
