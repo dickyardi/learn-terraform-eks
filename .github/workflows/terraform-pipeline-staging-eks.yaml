@@ -6,13 +6,15 @@ env:
 
 on:
   push:
-    paths:
-    - 'terraform-environments/aws/staging/20-eks'
+    # paths:
+    # - 'terraform-environments/aws/staging/20-eks'
     branches:
       - main
   pull_request:
-    paths:
-    - 'terraform-environments/aws/staging/20-eks'
+    branches:
+      - '**'
+    # paths:
+    # - 'terraform-environments/aws/staging/20-eks'
 
 jobs:
   terraform:
