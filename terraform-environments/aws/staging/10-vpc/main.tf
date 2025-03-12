@@ -5,7 +5,7 @@ locals {
     ops_env              = "${local.environment_name}"
     ops_managed_by       = "terraform",
     ops_source_repo      = "kubernetes-ops",
-    ops_source_repo_path = "aws/${local.environment_name}/vpc",
+    ops_source_repo_path = "terraform-environments/aws/${local.environment_name}/vpc",
     ops_owners           = "devops",
   }
 }

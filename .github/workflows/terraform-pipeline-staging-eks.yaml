@@ -1,19 +1,22 @@
 # The name of the pipeline.  Must be unique.
-name: "Terraform - AWS"
+name: "Terraform - AWS EKS"
+
+env:
+  WORKDIR: terraform-environments/aws/staging/20-eks
 
 on:
+  workflow_run:
+    workflows: ["Terraform - AWS VPC"]
+    types:
+      - completed
   push:
-    # only run when files in this path changes
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#example-using-positive-and-negative-patterns-1
     paths:
-    - 'terraform-environments/aws/staging/**'
+    - 'terraform-environments/aws/staging/20-eks'
     branches:
       - main
   pull_request:
-    # only run when files in this path changes
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#example-using-positive-and-negative-patterns-1
     paths:
-    - 'terraform-environments/aws/staging/**'
+    - 'terraform-environments/aws/staging/20-eks'
 
 jobs:
   terraform:
@@ -31,17 +34,17 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        working-directory: terraform-environments/aws/staging/10-vpc
-        run: terraform fmt -check
+        working-directory: $WORKDIR
+        run: terraform fmt
 
       - name: Terraform Init
         id: init
-        working-directory: terraform-environments/aws/staging/10-vpc
+        working-directory: $WORKDIR
         run: terraform init
 
       - name: Terraform Plan
         id: plan
-        working-directory: terraform-environments/aws/staging/10-vpc
+        working-directory: $WORKDIR
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color
         continue-on-error: true
@@ -51,6 +54,6 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        working-directory: terraform-environments/aws/staging/10-vpc
+        working-directory: $WORKDIR
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
