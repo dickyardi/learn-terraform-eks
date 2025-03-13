@@ -1,0 +1,55 @@
+# The name of the pipeline.  Must be unique.
+name: "Terraform - AWS Route 53"
+
+env:
+  WORKDIR: terraform-environments/aws/staging/5-route53-hostedzone
+
+on:
+  push:
+    paths:
+    - 'terraform-environments/aws/staging/5-route53-hostedzone/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+    - 'terraform-environments/aws/staging/5-route53-hostedzone/**'
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN_STAGING }}
+
+      - name: Terraform Format
+        id: fmt
+        working-directory: $WORKDIR
+        run: terraform fmt
+
+      - name: Terraform Init
+        id: init
+        working-directory: $WORKDIR
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: $WORKDIR
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        working-directory: $WORKDIR
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
