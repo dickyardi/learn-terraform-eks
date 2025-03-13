@@ -1,18 +1,18 @@
 # The name of the pipeline.  Must be unique.
-name: "Terraform - AWS EKS"
+name: "Terraform - AWS Route 53"
 
 env:
-  WORKDIR: terraform-environments/aws/staging/20-eks
+  WORKDIR: terraform-environments/aws/staging/5-route53-hostedzone
 
 on:
   push:
     paths:
-    - 'terraform-environments/aws/staging/20-eks/**'
+    - 'terraform-environments/aws/staging/5-route53-hostedzone/**'
     branches:
       - main
   pull_request:
     paths:
-    - 'terraform-environments/aws/staging/20-eks/**'
+    - 'terraform-environments/aws/staging/5-route53-hostedzone/**'
 
 jobs:
   terraform:
