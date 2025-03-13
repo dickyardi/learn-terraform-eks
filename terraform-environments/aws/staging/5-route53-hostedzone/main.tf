@@ -20,7 +20,7 @@ terraform {
 
   backend "remote" {
     # Update to your Terraform Cloud organization
-    organization = "managedkube"
+    organization = "stormcloaks"
 
     workspaces {
       name = "kubernetes-ops-staging-5-route53-hostedzone"
