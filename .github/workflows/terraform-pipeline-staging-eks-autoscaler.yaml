@@ -1,5 +1,5 @@
 # The name of the pipeline.  Must be unique.
-name: "Terraform - AWS EKS"
+name: "Terraform - AWS EKS Autoscaler"
 
 env:
   WORKDIR: terraform-environments/aws/staging/25-eks-cluster-autoscaler
