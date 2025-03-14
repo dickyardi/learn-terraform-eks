@@ -3,6 +3,7 @@ name: "Terraform - Helm nginx ingress"
 
 env:
   WORKDIR: terraform-environments/aws/staging/helm/nginx-ingress
+  AWS_REGION: ap-southeast-3
 
 on:
   push:
@@ -46,9 +47,16 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: $AWS_REGION
+
       - name: Set up kubeconfig
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: aws eks update-kubeconfig --name staging --region ap-southeast-3
+        run: aws eks update-kubeconfig --name staging --region $AWS_REGION
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
