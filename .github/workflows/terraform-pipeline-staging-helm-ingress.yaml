@@ -46,6 +46,10 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
+      - name: Set up kubeconfig
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws eks update-kubeconfig --name staging --region ap-southeast-3
+
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform -chdir=$WORKDIR apply -auto-approve
