@@ -75,10 +75,11 @@ provider "helm" {
 module "cluster-autoscaler" {
   source = "github.com/ManagedKube/kubernetes-ops//terraform-modules/aws/cluster-autoscaler?ref=v1.0.30"
 
-  aws_region                  = local.aws_region
-  cluster_name                = local.environment_name
-  # eks_cluster_name            = data.terraform_remote_state.eks.outputs.cluster_name
-  eks_cluster_oidc_issuer_url = data.terraform_remote_state.eks.outputs.cluster_oidc_issuer_url
+  aws_region                      = local.aws_region
+  cluster_name                    = local.environment_name
+  # eks_cluster_name               = data.terraform_remote_state.eks.outputs.cluster_name
+  eks_cluster_oidc_issuer_url     = data.terraform_remote_state.eks.outputs.cluster_oidc_issuer_url
+  cluster-autoscaler_helm_version = "9.46.3"
 
   depends_on = [
     data.terraform_remote_state.eks
