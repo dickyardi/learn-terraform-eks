@@ -1,0 +1,51 @@
+# The name of the pipeline.  Must be unique.
+name: "Terraform - Helm External DNS"
+
+env:
+  WORKDIR: terraform-environments/aws/staging/helm/external-dns
+
+on:
+  push:
+    paths:
+    - 'terraform-environments/aws/staging/helm/external-dns/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+    - 'terraform-environments/aws/staging/helm/external-dns/**'
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN_STAGING }}
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform -chdir=$WORKDIR fmt
+
+      - name: Terraform Init
+        id: init
+        run: terraform -chdir=$WORKDIR init
+
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform -chdir=$WORKDIR plan -no-color
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform -chdir=$WORKDIR apply -auto-approve
