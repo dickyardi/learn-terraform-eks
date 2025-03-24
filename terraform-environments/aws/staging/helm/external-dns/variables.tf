@@ -18,7 +18,7 @@ variable "eks_cluster_id" {
 
 variable "eks_cluster_oidc_issuer_url" {
   type        = string
-  default     = ""
+  default     = "arn:aws:iam::200625654012:oidc-provider/oidc.eks.ap-southeast-3.amazonaws.com/id/96EC196970EBB9BA6F215D2698F2A80F"
   description = "EKS cluster oidc issuer url"
 }
 
