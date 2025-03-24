@@ -1,4 +1,13 @@
 locals {
+  aws_region       = "ap-southeast-3"
+  environment_name = "staging"
+  tags = {
+    ops_env              = "${local.environment_name}"
+    ops_managed_by       = "terraform",
+    ops_source_repo      = "kubernetes-ops",
+    ops_source_repo_path = "terraform-environments/aws/${local.environment_name}/20-eks",
+    ops_owners           = "devops",
+  }
   helm_repository = "https://kubernetes-sigs.github.io/external-dns/"
   official_chart_name = "external-dns"
 }
