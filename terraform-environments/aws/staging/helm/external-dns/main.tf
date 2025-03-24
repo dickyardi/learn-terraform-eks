@@ -41,6 +41,10 @@ terraform {
   }
 }
 
+provider "aws" {
+  region = local.aws_region
+}
+
 data "terraform_remote_state" "eks" {
   backend = "remote"
   config = {
