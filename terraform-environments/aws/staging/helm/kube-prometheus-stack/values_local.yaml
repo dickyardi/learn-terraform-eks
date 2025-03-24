@@ -1,16 +1,16 @@
 ---
 namespaceOverride: monitoring
 
-prometheus:
-  prometheusSpec:
-    storageSpec:
-     volumeClaimTemplate:
-       spec:
-        #  storageClassName: gluster
-         accessModes: ["ReadWriteOnce"]
-         resources:
-           requests:
-             storage: 10Gi
+# prometheus:
+#   prometheusSpec:
+#     storageSpec:
+#      volumeClaimTemplate:
+#        spec:
+#         #  storageClassName: gluster
+#          accessModes: ["ReadWriteOnce"]
+#          resources:
+#            requests:
+#              storage: 10Gi
 #     additionalScrapeConfigs:
 #     # Istio scrap endpoints
 #     # Doc: https://istio.io/latest/docs/ops/integrations/prometheus/#option-2-customized-scraping-configurations
