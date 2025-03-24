@@ -2,6 +2,58 @@ locals {
   helm_repository = "https://kubernetes-sigs.github.io/external-dns/"
   official_chart_name = "external-dns"
 }
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.90.1"
+    }
+    random = {
+      source = "hashicorp/random"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.19.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.7.1"
+    }
+  }
+
+  backend "remote" {
+    # Update to your Terraform Cloud organization
+    organization = "stormcloaks"
+
+    workspaces {
+      name = "kubernetes-ops-staging-helm-external-dns"
+    }
+  }
+}
+
+data "terraform_remote_state" "eks" {
+  backend = "remote"
+  config = {
+    # Update to your Terraform Cloud organization
+    organization = "stormcloaks"
+    workspaces = {
+      name = "kubernetes-ops-staging-20-eks"
+    }
+  }
+}
+
+data "terraform_remote_state" "route53_hosted_zone" {
+  backend = "remote"
+  config = {
+    # Update to your Terraform Cloud organization
+    organization = "stormcloaks"
+    workspaces = {
+      name = "kubernetes-ops-staging-5-route53-hostedzone"
+    }
+  }
+}
+
 module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "3.6.0"
