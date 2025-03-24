@@ -5,7 +5,7 @@ Chart source: https://github.com/prometheus-community/helm-charts/tree/main/char
 ## AlertManager Receiver configuration
 You can use the helm `values.yaml` file to configure the AlertManager's configs.  One problem with this
 is that you have to commit the "receiver's" secret into git.  For example, like the Slack URL or the
-Pager Duty's key.
+Pager Duty's key. 
 
 An alternative way is to leave these receivers out of the helm `values.yaml` file and create the
 AlertManager's CR (custom resource).
