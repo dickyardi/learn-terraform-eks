@@ -78,6 +78,22 @@ provider "kubectl" {
   load_config_file       = false
 }
 
+#
+# EKS authentication
+# # https://registry.terraform.io/providers/hashicorp/helm/latest/docs#exec-plugins
+provider "helm" {
+  kubernetes {
+    host                   = data.terraform_remote_state.eks.outputs.cluster_endpoint
+    cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.cluster_certificate_authority_data)
+    exec {
+      api_version = "client.authentication.k8s.io/v1"
+      args        = ["eks", "get-token", "--cluster-name", "${local.environment_name}"]
+      command     = "aws"
+    }
+  }
+}
+
+
 module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "3.6.0"
