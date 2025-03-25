@@ -1,11 +1,12 @@
 locals {
   aws_region       = "ap-southeast-3"
   environment_name = "staging"
+  namespace        = "ingress-nginx"
   tags = {
     ops_env              = "${local.environment_name}"
     ops_managed_by       = "terraform",
     ops_source_repo      = "kubernetes-ops",
-    ops_source_repo_path = "terraform-environments/aws/${local.environment_name}/helm/external-dns",
+    ops_source_repo_path = "terraform-environments/aws/${local.environment_name}/helm/ingress-nginx-external",
     ops_owners           = "devops",
   }
 }
@@ -30,7 +31,7 @@ terraform {
     organization = "stormcloaks"
 
     workspaces {
-      name = "kubernetes-ops-staging-helm-external-dns"
+      name = "kubernetes-ops-staging-helm-ingress-nginx"
     }
   }
 }
@@ -50,20 +51,6 @@ data "terraform_remote_state" "eks" {
   }
 }
 
-data "terraform_remote_state" "route53_hosted_zone" {
-  backend = "remote"
-  config = {
-    # Update to your Terraform Cloud organization
-    organization = "stormcloaks"
-    workspaces = {
-      name = "kubernetes-ops-staging-5-route53-hostedzone"
-    }
-  }
-}
-
-#
-# EKS authentication
-# # https://registry.terraform.io/providers/hashicorp/helm/latest/docs#exec-plugins
 provider "helm" {
   kubernetes {
     host                   = data.terraform_remote_state.eks.outputs.cluster_endpoint
@@ -76,20 +63,36 @@ provider "helm" {
   }
 }
 
-#
-# Helm - external-dns
-#
-module "external-dns" {
-  source = "github.com/ManagedKube/kubernetes-ops//terraform-modules/aws/helm/external-dns?ref=v1.0.28"
+data "aws_eks_cluster_auth" "main" {
+  name = local.environment_name
+}
 
-  aws_region                  = local.aws_region
-  cluster_name                = local.environment_name
-  eks_cluster_id              = data.terraform_remote_state.eks.outputs.cluster_id
-  eks_cluster_oidc_issuer_url = data.terraform_remote_state.eks.outputs.cluster_oidc_issuer_url
-  route53_hosted_zones        = data.terraform_remote_state.route53_hosted_zone.outputs.zone_id
-  helm_values_2               = file("${path.module}/values.yaml")
+# Helm values file templating
+data "template_file" "helm_values" {
+  template = file("${path.module}/helm_values.tpl.yaml")
+
+  # Parameters you want to pass into the helm_values.yaml.tpl file to be templated
+  vars = {}
+}
+
+module "ingress-nginx-external" {
+  source = "github.com/ManagedKube/kubernetes-ops//terraform-modules/aws/helm/helm_generic?ref=v1.0.15"
+
+  # this is the helm repo add URL
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  # This is the helm repo add name
+  official_chart_name = "ingress-nginx"
+  # This is what you want to name the chart when deploying
+  user_chart_name = "ingress-nginx"
+  # The helm chart version you want to use
+  helm_version = "4.12.0"
+  # The namespace you want to install the chart into - it will create the namespace if it doesnt exist
+  namespace = local.namespace
+  # The helm chart values file
+  helm_values = data.template_file.helm_values.rendered
 
   depends_on = [
     data.terraform_remote_state.eks
   ]
 }
+

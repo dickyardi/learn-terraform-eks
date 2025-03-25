@@ -2,18 +2,18 @@
 name: "Terraform - Helm nginx ingress"
 
 env:
-  WORKDIR: terraform-environments/aws/staging/helm/nginx-ingress
+  WORKDIR: terraform-environments/aws/staging/helm/ingress-nginx-external
   AWS_REGION: ap-southeast-3
 
 on:
   push:
     paths:
-    - 'terraform-environments/aws/staging/helm/nginx-ingress/**'
+    - 'terraform-environments/aws/staging/helm/ingress-nginx-external/**'
     branches:
       - main
   pull_request:
     paths:
-    - 'terraform-environments/aws/staging/helm/nginx-ingress/**'
+    - 'terraform-environments/aws/staging/helm/ingress-nginx-external/**'
 
 jobs:
   terraform:
