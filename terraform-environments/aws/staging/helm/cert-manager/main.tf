@@ -27,6 +27,10 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.7.1"
     }
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+      version = "2.36.0"
+    }
   }
 
   backend "remote" {
@@ -89,6 +93,12 @@ provider "kubectl" {
   cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.cluster_certificate_authority_data)
   token                  = data.aws_eks_cluster_auth.main.token
   load_config_file       = false
+}
+
+provider "kubernetes" {
+  host                   = data.terraform_remote_state.eks.outputs.cluster_endpoint
+  cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.main.token
 }
 
 # Helm values file templating
