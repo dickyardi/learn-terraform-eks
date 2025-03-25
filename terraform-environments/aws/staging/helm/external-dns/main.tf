@@ -84,7 +84,7 @@ module "external-dns" {
 
   aws_region                  = local.aws_region
   cluster_name                = local.environment_name
-  eks_cluster_id              = data.terraform_remote_state.eks.outputs.cluster_id
+  # eks_cluster_id              = data.terraform_remote_state.eks.outputs.cluster_id
   eks_cluster_oidc_issuer_url = data.terraform_remote_state.eks.outputs.cluster_oidc_issuer_url
   route53_hosted_zones        = data.terraform_remote_state.route53_hosted_zone.outputs.zone_id
   helm_values_2               = file("${path.module}/values.yaml")
