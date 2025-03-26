@@ -1,15 +1,15 @@
 ---
 namespaceOverride: monitoring
-prometheus:
-  prometheusSpec:
-    storageSpec:
-     volumeClaimTemplate:
-       spec:
-        #  storageClassName: gluster
-         accessModes: ["ReadWriteOnce"]
-         resources:
-           requests:
-             storage: 10Gi
+# prometheus:
+#   prometheusSpec:
+#     storageSpec:
+#      volumeClaimTemplate:
+#        spec:
+#         #  storageClassName: gluster
+#          accessModes: ["ReadWriteOnce"]
+#          resources:
+#            requests:
+#              storage: 10Gi
 grafana:
   adminPassword: prom-operator
   ingress:
