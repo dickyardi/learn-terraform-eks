@@ -103,7 +103,8 @@ module "sample-app" {
   # this is the helm repo add URL
   repository = "https://helm-charts.managedkube.com"
   # This is the helm repo add name
-  official_chart_name = "standard-application"
+  # official_chart_name = "standard-application"
+  official_chart_name = "./charts/standard-application"
   # This is what you want to name the chart when deploying
   user_chart_name = var.fullnameOverride
   # The helm chart version you want to use
