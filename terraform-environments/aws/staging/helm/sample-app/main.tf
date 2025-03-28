@@ -19,6 +19,10 @@ terraform {
     random = {
       source = "hashicorp/random"
     }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.19.0"
+    }
     helm = {
       source  = "hashicorp/helm"
       version = ">= 2.7.1"
@@ -71,6 +75,17 @@ provider "helm" {
       command     = "aws"
     }
   }
+}
+
+data "aws_eks_cluster_auth" "main" {
+  name = local.environment_name
+}
+
+provider "kubectl" {
+  host                   = data.terraform_remote_state.eks.outputs.cluster_endpoint
+  cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.main.token
+  load_config_file       = false
 }
 
 # Helm values file templating
