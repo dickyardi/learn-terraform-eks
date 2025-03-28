@@ -107,7 +107,7 @@ module "sample-app" {
   # This is what you want to name the chart when deploying
   user_chart_name = var.fullnameOverride
   # The helm chart version you want to use
-  helm_version = "1.0.11"
+  helm_version = "1.0.33"
   # The namespace you want to install the chart into - it will create the namespace if it doesnt exist
   namespace = var.namespace
   # The helm chart values file
