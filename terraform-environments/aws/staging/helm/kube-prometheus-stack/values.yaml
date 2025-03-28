@@ -16,13 +16,13 @@ grafana:
     enabled: true
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt"
-      external-dns.alpha.kubernetes.io/hostname: "grafana.k8s.staging.stormcloaks.net"
+      external-dns.alpha.kubernetes.io/hostname: "grafana.k8s.staging.stormcloaks.site"
       kubernetes.io/ingress.class: nginx
     hosts:
-    - grafana.k8s.staging.stormcloaks.net
+    - grafana.k8s.staging.stormcloaks.site
     tls:
     - hosts:
-      - grafana.k8s.staging.stormcloaks.net # This should match a DNS name in the Certificate
+      - grafana.k8s.staging.stormcloaks.site # This should match a DNS name in the Certificate
       secretName: tls-grafana # This should match the Certificate secretName
   additionalDataSources:
   - name: loki
