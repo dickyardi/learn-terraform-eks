@@ -1,6 +1,6 @@
 locals {
   aws_region  = "ap-southeast-3"
-  domain_name = "k8s.staging.stormcloaks.net"
+  domain_name = "k8s.staging.stormcloaks.site"
   tags = {
     ops_env              = "staging"
     ops_managed_by       = "terraform",
