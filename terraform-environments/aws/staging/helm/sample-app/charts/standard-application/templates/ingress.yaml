@@ -1,0 +1,65 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "standard-application.fullname" . -}}
+{{- $ingressPaths := .Values.ingress.paths -}}
+
+{{- if .Values.ingress.ingressClass.enabled -}}
+# Ingress class
+# docs: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class
+# apiVersion: networking.k8s.io/v1beta1
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: {{ $fullName }}
+spec:
+  {{- with .Values.ingress.ingressClass.spec }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}
+
+# Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+  labels:
+    helm.sh/chart: {{ include "standard-application.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+
+  {{- end }}
+
+spec:
+  ingressClassName: {{ $fullName }}
+{{- if .Values.ingress.tls }}
+  tls:
+  {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+        {{- range $ingressPaths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ .servicePort }}
+        {{- end }}
+  {{- end }}
+{{- end }}

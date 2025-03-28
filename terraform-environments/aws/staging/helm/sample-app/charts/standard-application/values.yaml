@@ -1,0 +1,323 @@
+# Default values for standard-application.
+
+#
+# ReplicaCount denotes how many pods you want
+#
+replicaCount: 1
+
+nameOverride: ""
+fullnameOverride: ""
+
+# namespace: "default"
+
+labels: {}
+  # app: api-xxx
+  # foo: bar
+
+#
+# Deployment variables
+#
+deployment:
+  enable: true
+  #
+  # deployment spec template annotations
+  #
+  annotations: {}
+    # prometheus.io/path: /stats/prometheus
+    # prometheus.io/port: "15020"
+    # prometheus.io/scrape: "true"
+    # sidecar.istio.io/status: '{"initContainers":["istio-init"],"containers":["istio-proxy"],"volumes":["istio-envoy","istio-data","istio-podinfo","istio-token","istiod-ca-cert"],"imagePullSecrets":null}'
+  #
+  # Enable initContainers definition
+  #
+  enableInitContainer: false
+  initContainers:
+  - name: init-container-name
+    image: docker.io/my-container:foo
+    # any other init container usage spec: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/#init-containers-in-use
+    # This usage is different than the below "containers" section.  This section will directly output the following yaml list into
+    # the following location in the deployment spec: "spec.template.spec.initContainers".
+  #
+  # containers definition
+  #
+  containers:
+  - name: container-name
+    image:
+      repository: gcr.io/google_containers/echoserver
+      tag: "1.10"
+      pullPolicy: IfNotPresent
+    command: []
+    # - foo
+    # - bar
+    args: []
+    # - foo2
+    # - bar2
+
+    env:
+      # Values in the base environment will be applied across all environments, and are NOT expected to be overridden
+      # on a per-environment basis
+      base: []
+      # - name: foo
+      #   value: bar
+
+      # Values in perEnv will be local to an environment
+      perEnv: []
+      # - name: bar
+      #   value: foo
+
+    envFrom: []
+    # - secretRef:
+    #     name: mysecret
+
+    ports: []
+    # - name: http
+    #   protocol: TCP
+    #   containerPort: 80
+    #   servicePort: 8080
+
+    livenessProbe: {}
+      # httpGet:
+      #   path: /
+      #   port: http
+    readinessProbe: {}
+      # httpGet:
+      #   path: /
+      #   port: http
+    resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #  cpu: 100m
+      #  memory: 128Mi
+      # requests:
+      #  cpu: 100m
+      #  memory: 128Mi
+
+    securityContext: {}
+      # allowPrivilegeEscalation: false
+      # capabilities:
+      #   drop:
+      #   - ALL
+      # privileged: false
+      # readOnlyRootFilesystem: true
+      # runAsGroup: 1337
+      # runAsNonRoot: true
+      # runAsUser: 1337
+
+    volumeMounts: []
+    # # name must match the volume name below
+    # - name: secret-volume
+    #   mountPath: /etc/secret-volume
+
+  imagePullSecrets: []
+  # - registry-secret-1
+  # - registry-secret-2
+
+  strategy: {}
+    # type: Recreate
+    # rollingUpdate:
+    #   maxSurge: 1
+    #   maxUnavailable: 1
+
+  containerSpecOptions: {}
+    # dnsPolicy: ClusterFirst
+    # restartPolicy: Always
+    # schedulerName: default-scheduler
+    # terminationGracePeriodSeconds: 30
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+#
+# Volumes - to be attached to the pod.
+#
+# This only attaches the volume to the pod.  To use it, you have to add a "volumeMounts" to
+# a container on the location to mount it to or add it the content to the "env" of a container
+# in the pod.
+#
+volumes: []
+# - name: secret-volume
+#   secret:
+#     secretName: test-secret
+# - name: config-volume
+#   configMap:
+#     # Provide the name of the ConfigMap containing the files you want
+#     # to add to the container
+#     name: special-config
+
+statefulset:
+  enable: false
+
+volumeClaimTemplates:
+- metadata:
+    name: www
+  spec:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: "my-storage-class"
+    resources:
+      requests:
+        storage: 1Gi
+
+#
+# Service Monitors variables
+#
+servicemonitor:
+  enabled: false
+
+#
+# Service variables
+#
+service:
+  type: ClusterIP
+  port: 80
+
+#
+# Ingress variables
+#
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  paths: []
+    # - path: /api
+    #   pathType: Prefix
+    #   servicePort: 80
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+  ingressClass:
+    enabled: true
+    # The `ingressClassName` name will be named after the chart.
+    # This will allow each instantiation of this chart to control it's own ingressClass.
+    # Docs: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingressclass-scope
+    spec:
+      controller: istio.io/ingress-controller
+      # parameters:
+      #   # The parameters for this IngressClass are specified in a
+      #   # ClusterIngressParameter (API group k8s.example.net) named
+      #   # "external-config-1". This definition tells Kubernetes to
+      #   # look for a cluster-scoped parameter resource.
+      #   scope: Cluster
+      #   apiGroup: k8s.example.net
+      #   kind: ClusterIngressParameter
+      #   name: external-config-1
+
+#
+# Istio virtual service
+#
+# If you are using Istio, you should probably use the Istio gateway and virtual services
+# instead of the Kubernetes Ingress method to create an ingress/inbound endpoint for 
+# your application.  While using the Kubernetes Ingress will work you can potentiall
+# run into HTTP/2 connection reuse issues outlined here: 
+# https://istio.io/latest/docs/ops/common-problems/network-issues/#404-errors-occur-when-multiple-gateways-configured-with-same-tls-certificate
+# By using the Istio's gateway and virtual service method, you can over come this.
+istio:
+  ##
+  ## https://istio.io/latest/docs/reference/config/networking/virtual-service/
+  virtualService:
+    enabled: false
+    apiVersion: networking.istio.io/v1alpha3
+    spec:
+      gateways:
+      # <namespace>/gateway-name
+      - istio-system/main-gateway
+      hosts:
+      - www.example.com
+      - foo.com
+      http:
+      - match:
+        - uri:
+            prefix: /
+        route:
+        - destination:
+            port:
+              number: 8080
+            host: example-app
+
+#
+# HPA
+#
+hpa:
+  enabled: false
+  spec:
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: standard-application
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 50
+
+#
+# Service Account variables
+#
+serviceaccount:
+  enabled: false
+  annotations: {}
+    # eks.amazonaws.com/role-arn: arn:aws:iam::1234567890:role/my-role
+  labels: {}
+
+automountServiceAccountToken: true
+
+#
+# Flux Flagger
+#
+## Source: https://github.com/fluxcd/flagger
+## What this does: Flagger is a tool to help you to do various type of deployments
+## onto a Kubernetes cluster.  While Kubernetes gives us a deployment style such
+## as a rolling deployment but it doesnt provide us with something like a canary
+## release that can look at metrics before rolling out more.
+flux:
+  flagger:
+    enabled: false
+    apiVersion: flagger.app/v1beta1
+    spec:
+      targetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: example-app
+      service:
+        port: 8080
+      analysis:
+        interval: 1m
+        threshold: 10
+        maxWeight: 50
+        stepWeight: 5
+        # metrics:
+        #   - name: request-success-rate
+        #     thresholdRange:
+        #       min: 99
+        #     interval: 1m
+        #   - name: request-duration
+        #     thresholdRange:
+        #       max: 500
+        #     interval: 1m
+        webhooks:
+          ##########################################################################
+          ## Manual Gating
+          ## Doc: https://docs.flagger.app/usage/webhooks?q=prometheus#manual-gating
+          ##########################################################################
+          # - name: "gate"
+          #   type: confirm-rollout
+          #   url: http://loadtester.flagger-test/gate/halt
+          #   # url: http://loadtester.flagger-test/gate/approve
+
+          ##########################################################################
+          ## Istio canary
+          ## Doc: https://docs.flagger.app/tutorials/istio-progressive-delivery
+          ##########################################################################
+          - name: load-test
+            type: rollout
+            url: http://loadtester.flagger-test/
+            timeout: 5s
+            metadata:
+              cmd: "hey -z 1m -q 10 -c 2 http://example-app.example-app-namespace:8080/"
