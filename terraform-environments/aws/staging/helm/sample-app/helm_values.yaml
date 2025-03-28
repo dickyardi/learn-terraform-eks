@@ -41,6 +41,9 @@ ingress:
       - hosts:
           - api.k8s.staging.stormcloaks.site
         secretName: tls-sample-app
+    ingressClass:
+      enabled: true
+      # apiVersion: networking.k8s.io/v1
 
 # hpa:
 #   enabled: true
