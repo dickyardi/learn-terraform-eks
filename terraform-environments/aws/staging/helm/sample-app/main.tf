@@ -112,4 +112,8 @@ module "sample-app" {
   namespace = var.namespace
   # The helm chart values file
   helm_values = data.template_file.helm_values.rendered
+
+  postrender {
+    command = ["./fix-ingress-class.sh"]
+  }
 }
