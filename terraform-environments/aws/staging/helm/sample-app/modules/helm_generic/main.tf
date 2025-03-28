@@ -38,6 +38,6 @@ resource "helm_release" "helm_chart" {
   ]
 
   postrender {
-    binary_path = ["./fix-ingress-class.sh"]
+    binary_path = "./fix-ingress-class.sh"
   }
 }
