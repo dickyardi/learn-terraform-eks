@@ -99,7 +99,7 @@ data "template_file" "helm_values" {
   }
 }
 module "sample-app" {
-  source = "github.com/ManagedKube/kubernetes-ops//terraform-modules/aws/helm/helm_generic?ref=v2.0.92"
+  source = "./modules/helm_generic"
   # this is the helm repo add URL
   repository = "https://helm-charts.managedkube.com"
   # This is the helm repo add name
@@ -112,8 +112,4 @@ module "sample-app" {
   namespace = var.namespace
   # The helm chart values file
   helm_values = data.template_file.helm_values.rendered
-
-  postrender {
-    command = ["./fix-ingress-class.sh"]
-  }
 }

@@ -10,7 +10,6 @@ on:
     - 'terraform-environments/aws/staging/helm/sample-app/**'
     branches:
       - main
-      - sample-app
   pull_request:
     paths:
     - 'terraform-environments/aws/staging/helm/sample-app/**'
