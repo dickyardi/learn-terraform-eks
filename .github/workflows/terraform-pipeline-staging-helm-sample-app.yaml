@@ -46,6 +46,13 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
+      - name: debug
+        run: ls -lah terraform-environments/aws/staging/helm/sample-app/modules/helm_generic/ && pwd
+      - name: Fix script permissions
+        run: chmod +x terraform-environments/aws/staging/helm/sample-app/modules/helm_generic/fix-ingress-class.sh
+      - name: post-debug
+        run: ls -lah terraform-environments/aws/staging/helm/sample-app/modules/helm_generic/ && pwd
+
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform -chdir=$WORKDIR apply -auto-approve
