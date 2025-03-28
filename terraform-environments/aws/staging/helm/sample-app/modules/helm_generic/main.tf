@@ -37,7 +37,11 @@ resource "helm_release" "helm_chart" {
     var.helm_values_2,
   ]
 
-  postrender {
-    binary_path = "${path.module}/fix-ingress-class.sh"
+  # postrender {
+  #   binary_path = "${path.module}/fix-ingress-class.sh"
+  # }
+  set {
+    name  = "ingress.apiVersion"
+    value = "networking.k8s.io/v1"
   }
 }
