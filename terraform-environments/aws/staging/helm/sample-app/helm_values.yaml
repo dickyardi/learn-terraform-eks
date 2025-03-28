@@ -36,7 +36,7 @@ ingress:
       - api.k8s.staging.stormcloaks.site
     paths: 
     - path: /
-      servicePort: https  
+      servicePort: 443
     tls:
       - hosts:
           - api.k8s.staging.stormcloaks.site
