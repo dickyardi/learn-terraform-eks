@@ -69,4 +69,3 @@ No modules.
 |------|-------------|
 | <a name="output_chart"></a> [chart](#output\_chart) | n/a |
 | <a name="output_status"></a> [status](#output\_status) | n/a |
-

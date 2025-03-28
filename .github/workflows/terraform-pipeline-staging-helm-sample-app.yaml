@@ -46,8 +46,10 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - name: Fix script permissions
-        run: chmod +x modules/helm_generic/fix-ingress-class.sh
+      - name: debug
+        run: ls -lah && pwd
+      # - name: Fix script permissions
+      #   run: chmod +x modules/helm_generic/fix-ingress-class.sh
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
